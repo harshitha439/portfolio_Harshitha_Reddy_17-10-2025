@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <body>
+      <h2>Change event</h2>
+      <select onchange="yourChoice(this.value)">
+        <option value="Alekhya">Alekhya</option>
+        <option value="Bhavya">Bhavya</option>
+        <option value="Pravalika">Pravalika</option>
+      </select>
+      <p id="output"></p>
+      <script>
+        function yourChoice(Friends){
+            document.getElementById("output").innerHTML="you selected:"+friends;
+        }
+      </script>
+    </body>
+</html>

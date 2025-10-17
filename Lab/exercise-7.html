@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Bookstore</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f2f2f2;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .book, .cart-item {
+      background: white;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 1px 1px 6px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 5px 10px;
+      border: none;
+      background: navy;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: gray;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 Online Bookstore</h1>
+  <div id="book-list"></div>
+
+  <h2>🛒 Shopping Cart</h2>
+  <div id="cart"></div>
+  <h3 id="total">Total: $0.00</h3>
+  <button id="checkoutBtn">Checkout</button>
+
+  <script type="module">
+    const books = [
+      { title: "The Pragmatic Programmer", author: "Andrew Hunt", price: 25.99, availability: "in stock" },
+      { title: "Clean Code", author: "Robert C. Martin", price: 30.50, availability: "in stock" },
+      { title: "JavaScript: The Good Parts", author: "Douglas Crockford", price: 20.00, availability: "out of stock" },
+      { title: "You Don’t Know JS", author: "Kyle Simpson", price: 28.75, availability: "in stock" }
+    ];
+
+    let cart = [];
+
+    function getCartTotal() {
+      return cart.reduce((total, item) => total + item.price, 0);
+    }
+
+    function updateCartUI() {
+      const cartContainer = document.getElementById("cart");
+      const totalContainer = document.getElementById("total");
+      cartContainer.innerHTML = "";
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p>Your cart is empty</p>";
+        totalContainer.textContent = "Total: $0.00";
+        return;
+      }
+      cart.forEach((item, index) => {
+        const cartItem = document.createElement("div");
+        cartItem.classList.add("cart-item");
+        cartItem.innerHTML = `
+          <p>${item.title} - $${item.price.toFixed(2)}</p>
+          <button data-index="${index}">Remove</button>
+        `;
+        cartContainer.appendChild(cartItem);
+      });
+      totalContainer.textContent = `Total: $${getCartTotal().toFixed(2)}`;
+      cartContainer.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          cart.splice(e.target.dataset.index, 1);
+          updateCartUI();
+        });
+      });
+    }
+
+    function addToCart(book) {
+      cart.push(book);
+      updateCartUI();
+    }
+
+    function renderBookList() {
+      const container = document.getElementById("book-list");
+      container.innerHTML = "";
+      books.forEach((book, index) => {
+        const bookDiv = document.createElement("div");
+        bookDiv.classList.add("book");
+        bookDiv.innerHTML = `
+          <h3>${book.title}</h3>
+          <p>Author: ${book.author}</p>
+          <p>Price: $${book.price.toFixed(2)}</p>
+          <p>Status: ${book.availability}</p>
+          <button ${book.availability === "out of stock" ? "disabled" : ""} data-index="${index}">Add to Cart</button>
+        `;
+        container.appendChild(bookDiv);
+      });
+      container.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          addToCart(books[e.target.dataset.index]);
+        });
+      });
+    }
+
+    document.getElementById("checkoutBtn").addEventListener("click", () => {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+      } else {
+        alert("Proceeding to checkout with " + cart.length + " item(s). Total: $" + getCartTotal().toFixed(2));
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderBookList();
+      updateCartUI();
+    });
+  </script>
+</body>
+</html>
